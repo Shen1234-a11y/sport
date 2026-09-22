@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SPRINT | 运动品牌官网</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: "Microsoft YaHei", sans-serif;
+        background-color: #0f0f0f;
+        color: #fff;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    img {
+        max-width: 100%;
+        display: block;
+    }
+
+    /* 导航栏 */
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0));
+        transition: background 0.3s;
+    }
+    .navbar.scrolled {
+        background: #0f0f0f;
+        box-shadow: 0 2px 15px #00000060;
+    }
+    .logo {
+        font-size:26px;
+        font-weight:800;
+        color:#ff3b20;
+        letter-spacing:2px;
+    }
+    .nav-menu {
+        display:flex;
+        gap:32px;
+        list-style:none;
+    }
+    .nav-menu a {
+        font-size:15px;
+        padding:6px 0;
+        position:relative;
+    }
+    .nav-menu a::after{
+        content:"";
+        position:absolute;
+        left:0;
+        bottom:0;
+        width:0;
+        height:2px;
+        background:#ff3b20;
+        transition:0.3s;
+    }
+    .nav-menu a:hover::after{
+        width:100%;
+    }
+    .nav-action {
+        display:flex;
+        gap:20px;
+    }
+    .nav-btn-icon{
+        background:transparent;
+        border:none;
+        color:#fff;
+        font-size:20px;
+        cursor:pointer;
+    }
+    .nav-btn-icon:hover{
+        color:#ff3b20;
+    }
+
+    /* 首屏Hero */
+    .hero{
+        height:100vh;
+        position:relative;
+        display:flex;
+        align-items:center;
+    }
+    .hero-bg{
+        position:absolute;
+        inset:0;
+        background:url("https://images.unsplash.com/photo-1556906781-9a412961c28c") center/cover no-repeat;
+        opacity:0.32;
+    }
+    .hero-overlay{
+        position:absolute;
+        inset:0;
+        background:radial-gradient(ellipse,transparent 35%,rgba(0,0,0,0.82) 100%);
+    }
+    .hero-content{
+        position:relative;
+        z-index:2;
+        padding:0 40px;
+        max-width:1200px;
+    }
+    .hero-tag{
+        border:1px solid #ff3b20;
+        color:#ff3b20;
+        font-size:13px;
+        padding:8px 16px;
+        display:inline-block;
+        margin-bottom:24px;
+        letter-spacing:2px;
+    }
+    .hero h1{
+        font-size:68px;
+        line-height:1.1;
+        margin-bottom:22px;
+    }
+    .hero h1 span{
+        color:#ff3b20;
+    }
+    .hero p{
+        color:#ddd;
+        font-size:18px;
+        max-width:540px;
+        margin-bottom:36px;
+    }
+    .btn-group{
+        display:flex;
+        gap:18px;
+    }
+    .btn{
+        padding:15px 34px;
+        border-radius:4px;
+        font-weight:bold;
+        font-size:15px;
+        border:none;
+        cursor:pointer;
+        transition:all 0.3s;
+    }
+    .btn-primary{
+        background:#ff3b20;
+        color:#fff;
+    }
+    .btn-primary:hover{
+        background:#e02c13;
+        transform:translateY(-3px);
+        box-shadow:0 10px 24px rgba(255,59,32,0.35);
+    }
+    .btn-outline{
+        background:transparent;
+        border:2px solid #fff;
+        color:#fff;
+    }
+    .btn-outline:hover{
+        background:#fff;
+        color:#000;
+    }
+
+    /* 分类板块 */
+    .category-wrap{
+        display:grid;
+        grid-template-columns: repeat(3,1fr);
+    }
+    .category-card{
+        height:400px;
+        position:relative;
+        overflow:hidden;
+        cursor:pointer;
+    }
+    .category-card img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        transition:transform 0.5s;
+    }
+    .category-card:hover img{
+        transform:scale(1.07);
+    }
+    .category-info{
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        padding:36px;
+        background:linear-gradient(transparent, rgba(0,0,0,0.9));
+    }
+    .category-info h3{
+        font-size:26px;
+        margin-bottom:8px;
+    }
+    .category-info p{
+        color:#ccc;
+        margin-bottom:14px;
+    }
+    .cat-link{
+        color:#ff3b20;
+        font-weight:bold;
+        font-size:14px;
+    }
+
+    /* 产品板块 */
+    .product-section{
+        background:#ffffff;
+        color:#111;
+        padding:110px 40px;
+    }
+    .section-head{
+        max-width:1200px;
+        margin:0 auto 48px;
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-end;
+        flex-wrap:wrap;
+    }
+    .section-head h2{
+        font-size:42px;
+    }
+    .section-head h2 span{
+        color:#ff3b20;
+    }
+    .product-grid{
+        max-width:1200px;
+        margin:0 auto;
+        display:grid;
+        grid-template-columns: repeat(4,1fr);
+        gap:30px;
+    }
+    .product-card{
+        background:#f7f7f7;
+        border-radius:10px;
+        overflow:hidden;
+        transition:0.3s;
+    }
+    .product-card:hover{
+        transform:translateY(-10px);
+        box-shadow:0 16px 32px rgba(0,0,0,0.12);
+    }
+    .product-img-box{
+        height:260px;
+    }
+    .product-img-box img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+    .product-text{
+        padding:22px;
+    }
+    .product-tag{
+        color:#ff3b20;
+        font-size:13px;
+        font-weight:bold;
+        margin-bottom:8px;
+    }
+    .product-text h4{
+        font-size:18px;
+        margin-bottom:10px;
+    }
+    .price{
+        font-size:20px;
+        font-weight:bold;
+    }
+    .add-cart-btn{
+        margin-top:14px;
+        width:100%;
+        padding:10px;
+        background:#111;
+        color:#fff;
+        border:none;
+        border-radius:4px;
+        cursor:pointer;
+    }
+    .add-cart-btn:hover{
+        background:#ff3b20;
+    }
+
+    /* 品牌介绍 */
+    .brand-block{
+        padding:130px 40px;
+        background:#111;
+        text-align:center;
+    }
+    .brand-block h2{
+        font-size:46px;
+        margin-bottom:20px;
+    }
+    .brand-block h2 span{
+        color:#ff3b20;
+    }
+    .brand-block p{
+        max-width:760px;
+        margin:0 auto 34px;
+        color:#bbbbbb;
+        font-size:18px;
+    }
+
+    /* 页脚 */
+    footer{
+        background:#000;
+        padding:60px 40px 24px;
+    }
+    .footer-grid{
+        max-width:1200px;
+        margin:0 auto 40px;
+        display:grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap:36px;
+    }
+    .footer-col h4{
+        color:#ff3b20;
+        margin-bottom:20px;
+        font-size:15px;
+    }
+    .footer-col ul{
+        list-style:none;
+    }
+    .footer-col li{
+        margin-bottom:12px;
+    }
+    .footer-col a{
+        color:#aaa;
+        font-size:14px;
+    }
+    .footer-col a:hover{
+        color:#fff;
+    }
+    .copyright{
+        max-width:1200px;
+        margin:0 auto;
+        border-top:1px solid #222;
+        padding-top:24px;
+        text-align:center;
+        color:#666;
+        font-size:13px;
+    }
+
+    /* 移动端适配 */
+    @media(max-width:1024px){
+        .product-grid{grid-template-columns: repeat(2,1fr);}
+        .footer-grid{grid-template-columns: 1fr 1fr;}
+    }
+    @media(max-width:768px){
+        .nav-menu{display:none;}
+        .category-wrap{grid-template-columns:1fr;}
+        .product-grid{grid-template-columns:1fr;}
+        .footer-grid{grid-template-columns:1fr;}
+        .hero h1{font-size:42px;}
+    }
+</style>
+</head>
+<body>
+<!--导航栏-->
+<nav class="navbar" id="navbar">
+    <div class="logo">SPRINT</div>
+    <ul class="nav-menu">
+        <li><a href="#new">新品</a></li>
+        <li><a href="#run">跑步</a></li>
+        <li><a href="#train">训练</a></li>
+        <li><a href="#outdoor">户外</a></li>
+        <li><a href="#brand">品牌故事</a></li>
+    </ul>
+    <div class="nav-action">
+        <button class="nav-btn-icon" onclick="alert('搜索功能已触发')">🔍</button>
+        <button class="nav-btn-icon" onclick="alert('个人中心已打开')">👤</button>
+        <button class="nav-btn-icon" onclick="alert('购物车已打开')">🛒</button>
+    </div>
+</nav>
+
+<!--首屏-->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-tag">2026 全新系列</div>
+        <h1>突破自我<br><span>永不停止</span></h1>
+        <p>SPRINT高性能运动装备，为每一位运动爱好者打造专业跑鞋、服饰与配件。</p>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="alert('跳转至全部商品页面')">浏览全部商品</button>
+            <button class="btn btn-outline" onclick="alert('跳转品牌介绍页面')">了解品牌</button>
+        </div>
+    </div>
+</section>
+
+<!--分类区-->
+<section class="category-wrap" id="new">
+    <div class="category-card" onclick="alert('进入跑步系列')">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff" alt="跑步">
+        <div class="category-info">
+            <h3>跑步系列</h3>
+            <p>轻量回弹，专业竞速跑鞋</p>
+            <span class="cat-link">查看系列 →</span>
+        </div>
+    </div>
+    <div class="category-card" onclick="alert('进入训练系列')">
+        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438" alt="训练">
+        <div class="category-info">
+            <h3>训练系列</h3>
+            <p>速干透气，健身力量装备</p>
+            <span class="cat-link">查看系列 →</span>
+        </div>
+    </div>
+    <div class="category-card" onclick="alert('进入户外系列')">
+        <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256" alt="户外">
+        <div class="category-info">
+            <h3>户外系列</h3>
+            <p>耐磨抗造，探索山野城市</p>
+            <span class="cat-link">查看系列 →</span>
+        </div>
+    </div>
+</section>
+
+<!--产品区域-->
+<section class="product-section" id="run">
+    <div class="section-head">
+        <div>
+            <h2>热门<span>单品</span></h2>
+            <p>精选高性能运动装备，兼顾专业性能与潮流外观</p>
+        </div>
+        <button class="btn btn-primary" onclick="alert('查看全部产品')">全部商品</button>
+    </div>
+    <div class="product-grid">
+        <div class="product-card" id="train">
+            <div class="product-img-box">
+                <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa" alt="疾风跑鞋">
+            </div>
+            <div class="product-text">
+                <div class="product-tag">跑步｜缓震跑鞋</div>
+                <h4>疾风竞速跑鞋</h4>
+                <div class="price">¥699</div>
+                <button class="add-cart-btn" onclick="alert('已加入购物车：疾风竞速跑鞋')">加入购物车</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <div class="product-img-box">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b" alt="训练背心">
+            </div>
+            <div class="product-text">
+                <div class="product-tag">训练｜速干面料</div>
+                <h4>高能训练背心</h4>
+                <div class="price">¥229</div>
+                <button class="add-cart-btn" onclick="alert('已加入购物车：高能训练背心')">加入购物车</button>
+            </div>
+        </div>
+        <div class="product-card" id="outdoor">
+            <div class="product-img-box">
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772" alt="篮球鞋">
+            </div>
+            <div class="product-text">
+                <div class="product-tag">篮球｜高帮包裹</div>
+                <h4>战魂篮球鞋</h4>
+                <div class="price">¥899</div>
+                <button class="add-cart-btn" onclick="alert('已加入购物车：战魂篮球鞋')">加入购物车</button>
+            </div>
+        </div>
+        <div class="product-card">
+            <div class="product-img-box">
+                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62" alt="运动背包">
+            </div>
+            <div class="product-text">
+                <div class="product-tag">户外｜大容量背包</div>
+                <h4>城市运动背包</h4>
+                <div class="price">¥299</div>
+                <button class="add-cart-btn" onclick="alert('已加入购物车：城市运动背包')">加入购物车</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--品牌介绍-->
+<section class="brand-block" id="brand">
+    <h2>运动，是<span>无限力量</span></h2>
+    <p>SPRINT坚持用运动科技赋能每一次奔跑、训练与户外探索，不定义极限，只突破边界。</p>
+    <button class="btn btn-primary" onclick="alert('跳转品牌详情页面')">了解更多品牌故事</button>
+</section>
+
+<!--页脚-->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="logo">SPRINT</div>
+            <p style="color:#aaa; margin-top:14px;">专业运动装备品牌，陪伴每一位运动爱好者奔赴热爱。</p>
+        </div>
+        <div class="footer-col">
+            <h4>购物</h4>
+            <ul>
+                <li><a href="#new">新品上市</a></li>
+                <li><a href="#run">跑步系列</a></li>
+                <li><a href="#train">训练系列</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>服务</h4>
+            <ul>
+                <li><a href="#" onclick="alert('配送说明')">配送说明</a></li>
+                <li><a href="#" onclick="alert('退换货政策')">退换货</a></li>
+                <li><a href="#" onclick="alert('联系客服')">联系客服</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>关于</h4>
+            <ul>
+                <li><a href="#brand">品牌故事</a></li>
+                <li><a href="#" onclick="alert('门店查询')">线下门店</a></li>
+                <li><a href="#" onclick="alert('加入我们')">招贤纳士</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">© 2026 SPRINT SPORTS 版权所有</div>
+</footer>
+
+<script>
+//导航滚动变色
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+    if(window.scrollY>60){
+        navbar.classList.add('scrolled');
+    }else{
+        navbar.classList.remove('scrolled');
+    }
+})
+//锚点平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(link=>{
+    link.addEventListener('click',function(e){
+        const targetId = this.getAttribute('href');
+        if(targetId=="#") return;
+        const target = document.querySelector(targetId);
+        if(target){
+            e.preventDefault();
+            target.scrollIntoView({behavior:"smooth"})
+        }
+    })
+})
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
