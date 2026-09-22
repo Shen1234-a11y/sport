@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>味集｜美食网站主页</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: "Microsoft YaHei", sans-serif;
+        background-color: #fffdfa;
+        color: #333;
+    }
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    img {
+        max-width: 100%;
+        display: block;
+    }
+
+    /* 导航栏 */
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+        transition: background 0.3s;
+    }
+    .navbar.scrolled {
+        background: #ffffff;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .navbar.scrolled .logo,
+    .navbar.scrolled .nav-menu a,
+    .navbar.scrolled .nav-btn-icon {
+        color: #333;
+    }
+    .logo {
+        font-size:28px;
+        font-weight:800;
+        color:#ff6b35;
+        letter-spacing:2px;
+    }
+    .nav-menu {
+        display:flex;
+        gap:32px;
+        list-style:none;
+    }
+    .nav-menu a {
+        font-size:15px;
+        color:#fff;
+        padding:6px 0;
+        position:relative;
+    }
+    .nav-menu a::after{
+        content:"";
+        position:absolute;
+        left:0;
+        bottom:0;
+        width:0;
+        height:2px;
+        background:#ff6b35;
+        transition:0.3s;
+    }
+    .nav-menu a:hover::after{
+        width:100%;
+    }
+    .nav-action {
+        display:flex;
+        gap:20px;
+    }
+    .nav-btn-icon{
+        background:transparent;
+        border:none;
+        color:#fff;
+        font-size:20px;
+        cursor:pointer;
+    }
+    .nav-btn-icon:hover{
+        color:#ff6b35;
+    }
+
+    /* 首屏Hero */
+    .hero{
+        height:100vh;
+        position:relative;
+        display:flex;
+        align-items:center;
+    }
+    .hero-bg{
+        position:absolute;
+        inset:0;
+        background:url("https://images.unsplash.com/photo-1504674900247-0877df9cc836") center/cover no-repeat;
+        opacity:0.75;
+    }
+    .hero-overlay{
+        position:absolute;
+        inset:0;
+        background:rgba(0,0,0,0.4);
+    }
+    .hero-content{
+        position:relative;
+        z-index:2;
+        padding:0 40px;
+        max-width:1200px;
+    }
+    .hero-tag{
+        border:1px solid #ff6b35;
+        color:#ff6b35;
+        font-size:13px;
+        padding:8px 16px;
+        display:inline-block;
+        margin-bottom:24px;
+        letter-spacing:2px;
+        background:rgba(255,255,255,0.15);
+    }
+    .hero h1{
+        font-size:68px;
+        color:#fff;
+        line-height:1.1;
+        margin-bottom:22px;
+    }
+    .hero h1 span{
+        color:#ff6b35;
+    }
+    .hero p{
+        color:#fff;
+        font-size:18px;
+        max-width:540px;
+        margin-bottom:36px;
+    }
+    .btn-group{
+        display:flex;
+        gap:18px;
+    }
+    .btn{
+        padding:15px 34px;
+        border-radius:4px;
+        font-weight:bold;
+        font-size:15px;
+        border:none;
+        cursor:pointer;
+        transition:all 0.3s;
+    }
+    .btn-primary{
+        background:#ff6b35;
+        color:#fff;
+    }
+    .btn-primary:hover{
+        background:#e65c2b;
+        transform:translateY(-3px);
+        box-shadow:0 10px 24px rgba(255,107,53,0.35);
+    }
+    .btn-outline{
+        background:transparent;
+        border:2px solid #fff;
+        color:#fff;
+    }
+    .btn-outline:hover{
+        background:#fff;
+        color:#333;
+    }
+
+    /* 美食分类板块 */
+    .category-wrap{
+        display:grid;
+        grid-template-columns: repeat(3,1fr);
+    }
+    .category-card{
+        height:400px;
+        position:relative;
+        overflow:hidden;
+        cursor:pointer;
+    }
+    .category-card img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        transition:transform 0.5s;
+    }
+    .category-card:hover img{
+        transform:scale(1.07);
+    }
+    .category-info{
+        position:absolute;
+        bottom:0;
+        left:0;
+        width:100%;
+        padding:36px;
+        background:linear-gradient(transparent, rgba(0,0,0,0.85));
+    }
+    .category-info h3{
+        font-size:26px;
+        color:#fff;
+        margin-bottom:8px;
+    }
+    .category-info p{
+        color:#eee;
+        margin-bottom:14px;
+    }
+    .cat-link{
+        color:#ff6b35;
+        font-weight:bold;
+        font-size:14px;
+    }
+
+    /* 热门菜品板块 */
+    .food-section{
+        background:#fffdfa;
+        color:#333;
+        padding:110px 40px;
+    }
+    .section-head{
+        max-width:1200px;
+        margin:0 auto 48px;
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-end;
+        flex-wrap:wrap;
+    }
+    .section-head h2{
+        font-size:42px;
+    }
+    .section-head h2 span{
+        color:#ff6b35;
+    }
+    .food-grid{
+        max-width:1200px;
+        margin:0 auto;
+        display:grid;
+        grid-template-columns: repeat(4,1fr);
+        gap:30px;
+    }
+    .food-card{
+        background:#fff;
+        border-radius:10px;
+        overflow:hidden;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        transition:0.3s;
+    }
+    .food-card:hover{
+        transform:translateY(-10px);
+        box-shadow:0 16px 32px rgba(0,0,0,0.12);
+    }
+    .food-img-box{
+        height:260px;
+    }
+    .food-img-box img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+    .food-text{
+        padding:22px;
+    }
+    .food-tag{
+        color:#ff6b35;
+        font-size:13px;
+        font-weight:bold;
+        margin-bottom:8px;
+    }
+    .food-text h4{
+        font-size:18px;
+        margin-bottom:10px;
+    }
+    .price{
+        font-size:20px;
+        font-weight:bold;
+    }
+    .add-order-btn{
+        margin-top:14px;
+        width:100%;
+        padding:10px;
+        background:#333;
+        color:#fff;
+        border:none;
+        border-radius:4px;
+        cursor:pointer;
+    }
+    .add-order-btn:hover{
+        background:#ff6b35;
+    }
+
+    /* 品牌介绍 */
+    .about-block{
+        padding:130px 40px;
+        background:#f9f2ec;
+        text-align:center;
+    }
+    .about-block h2{
+        font-size:46px;
+        margin-bottom:20px;
+    }
+    .about-block h2 span{
+        color:#ff6b35;
+    }
+    .about-block p{
+        max-width:760px;
+        margin:0 auto 34px;
+        color:#555;
+        font-size:18px;
+    }
+
+    /* 页脚 */
+    footer{
+        background:#222;
+        padding:60px 40px 24px;
+        color:#ddd;
+    }
+    .footer-grid{
+        max-width:1200px;
+        margin:0 auto 40px;
+        display:grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap:36px;
+    }
+    .footer-col h4{
+        color:#ff6b35;
+        margin-bottom:20px;
+        font-size:15px;
+    }
+    .footer-col ul{
+        list-style:none;
+    }
+    .footer-col li{
+        margin-bottom:12px;
+    }
+    .footer-col a{
+        color:#aaa;
+        font-size:14px;
+    }
+    .footer-col a:hover{
+        color:#fff;
+    }
+    .copyright{
+        max-width:1200px;
+        margin:0 auto;
+        border-top:1px solid #444;
+        padding-top:24px;
+        text-align:center;
+        color:#888;
+        font-size:13px;
+    }
+
+    /* 移动端适配 */
+    @media(max-width:1024px){
+        .food-grid{grid-template-columns: repeat(2,1fr);}
+        .footer-grid{grid-template-columns: 1fr 1fr;}
+    }
+    @media(max-width:768px){
+        .nav-menu{display:none;}
+        .category-wrap{grid-template-columns:1fr;}
+        .food-grid{grid-template-columns:1fr;}
+        .footer-grid{grid-template-columns:1fr;}
+        .hero h1{font-size:42px;}
+    }
+</style>
+</head>
+<body>
+<!--导航栏-->
+<nav class="navbar" id="navbar">
+    <div class="logo">味集</div>
+    <ul class="nav-menu">
+        <li><a href="#hot">热门菜品</a></li>
+        <li><a href="#chinese">中餐</a></li>
+        <li><a href="#west">西餐</a></li>
+        <li><a href="#dessert">甜品</a></li>
+        <li><a href="#about">关于我们</a></li>
+    </ul>
+    <div class="nav-action">
+        <button class="nav-btn-icon" onclick="alert('搜索美食')">🔍</button>
+        <button class="nav-btn-icon" onclick="alert('打开个人中心')">👤</button>
+        <button class="nav-btn-icon" onclick="alert('打开点餐购物车')">🛒</button>
+    </div>
+</nav>
+
+<!--首屏-->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-tag">当季新品 · 新鲜上线</div>
+        <h1>寻觅人间<span>烟火味</span></h1>
+        <p>味集甄选各地优质食材，汇聚中餐、西餐、甜品小食，足不出户品尝地道美味。</p>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="alert('跳转菜品列表页面')">浏览全部菜品</button>
+            <button class="btn btn-outline" onclick="alert('跳转品牌介绍页面')">了解我们</button>
+        </div>
+    </div>
+</section>
+
+<!--美食分类区-->
+<section class="category-wrap" id="hot">
+    <div class="category-card" onclick="alert('进入中餐专区')">
+        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8" alt="中餐">
+        <div class="category-info">
+            <h3>中餐美味</h3>
+            <p>地道家常菜，传承传统风味</p>
+            <span class="cat-link">查看更多 →</span>
+        </div>
+    </div>
+    <div class="category-card" onclick="alert('进入西餐专区')">
+        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c" alt="西餐">
+        <div class="category-info">
+            <h3>西餐料理</h3>
+            <p>精致料理，享受仪式感</p>
+            <span class="cat-link">查看更多 →</span>
+        </div>
+    </div>
+    <div class="category-card" onclick="alert('进入甜品专区')">
+        <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307" alt="甜品">
+        <div class="category-info">
+            <h3>甜品小食</h3>
+            <p>甜蜜治愈，下午茶首选</p>
+            <span class="cat-link">查看更多 →</span>
+        </div>
+    </div>
+</section>
+
+<!--热门菜品区域-->
+<section class="food-section" id="chinese">
+    <div class="section-head">
+        <div>
+            <h2>人气<span>菜品</span></h2>
+            <p>食客好评精选，新鲜现做，当日送达</p>
+        </div>
+        <button class="btn btn-primary" onclick="alert('查看全部菜品')">全部菜品</button>
+    </div>
+    <div class="food-grid">
+        <div class="food-card" id="west">
+            <div class="food-img-box">
+                <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d" alt="红烧牛腩">
+            </div>
+            <div class="food-text">
+                <div class="food-tag">中餐｜招牌硬菜</div>
+                <h4>红烧牛腩</h4>
+                <div class="price">¥58</div>
+                <button class="add-order-btn" onclick="alert('已加入订单：红烧牛腩')">立即下单</button>
+            </div>
+        </div>
+        <div class="food-card">
+            <div class="food-img-box">
+                <img src="https://images.unsplash.com/photo-1579684947550-22e945225d9a" alt="黑椒牛排">
+            </div>
+            <div class="food-text">
+                <div class="food-tag">西餐｜经典主菜</div>
+                <h4>黑椒牛排</h4>
+                <div class="price">¥88</div>
+                <button class="add-order-btn" onclick="alert('已加入订单：黑椒牛排')">立即下单</button>
+            </div>
+        </div>
+        <div class="food-card" id="dessert">
+            <div class="food-img-box">
+                <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187" alt="草莓蛋糕">
+            </div>
+            <div class="food-text">
+                <div class="food-tag">甜品｜人气爆款</div>
+                <h4>草莓慕斯蛋糕</h4>
+                <div class="price">¥36</div>
+                <button class="add-order-btn" onclick="alert('已加入订单：草莓慕斯蛋糕')">立即下单</button>
+            </div>
+        </div>
+        <div class="food-card">
+            <div class="food-img-box">
+                <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8" alt="番茄意面">
+            </div>
+            <div class="food-text">
+                <div class="food-tag">西餐｜简餐</div>
+                <h4>番茄肉酱意面</h4>
+                <div class="price">¥32</div>
+                <button class="add-order-btn" onclick="alert('已加入订单：番茄肉酱意面')">立即下单</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--关于我们-->
+<section class="about-block" id="about">
+    <h2>用心做好<span>每一道菜</span></h2>
+    <p>味集坚持选用新鲜食材，拒绝预制半成品，由主厨精心烹制，把美味与温暖送到餐桌。</p>
+    <button class="btn btn-primary" onclick="alert('跳转品牌介绍页面')">了解更多</button>
+</section>
+
+<!--页脚-->
+<footer>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="logo">味集</div>
+            <p style="color:#aaa; margin-top:14px;">汇聚四方美食，传递烟火温暖，线上点餐，新鲜直达。</p>
+        </div>
+        <div class="footer-col">
+            <h4>菜品分类</h4>
+            <ul>
+                <li><a href="#chinese">中餐</a></li>
+                <li><a href="#west">西餐</a></li>
+                <li><a href="#dessert">甜品</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>客户服务</h4>
+            <ul>
+                <li><a href="#" onclick="alert('配送规则')">配送说明</a></li>
+                <li><a href="#" onclick="alert('退款政策')">退款售后</a></li>
+                <li><a href="#" onclick="alert('联系客服')">联系客服</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>关于味集</h4>
+            <ul>
+                <li><a href="#about">品牌介绍</a></li>
+                <li><a href="#" onclick="alert('门店地址')">线下门店</a></li>
+                <li><a href="#" onclick="alert('加入我们')">招聘信息</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">© 2026 味集美食网站 版权所有</div>
+</footer>
+
+<script>
+//导航滚动变色
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+    if(window.scrollY>60){
+        navbar.classList.add('scrolled');
+    }else{
+        navbar.classList.remove('scrolled');
+    }
+})
+//锚点平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(link=>{
+    link.addEventListener('click',function(e){
+        const targetId = this.getAttribute('href');
+        if(targetId=="#") return;
+        const target = document.querySelector(targetId);
+        if(target){
+            e.preventDefault();
+            target.scrollIntoView({behavior:"smooth"})
+        }
+    })
+})
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
